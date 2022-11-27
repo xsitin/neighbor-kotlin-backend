@@ -1,7 +1,50 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/neighbor
+    url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: password
   jpa:
     generate-ddl: on
+
+jwt:
+  public:
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtXDUZjDje5NmrcG1cY/m
+      SSi2xTzFTUxcFOQJZGriyiswAIUKuojlLkqfGiTn6CjnS9yxkJk1spQya6V5PxmE
+      u5PoK9ilP552gbDVwssar2//4fy9xl8nK5xbDMbNw7QhsEBS4ZvKIiksDVupnfn8
+      GXp/Im5KhF6XjbdEEVVvRtY0vYUa7R3TaRUT8TL4Qv7BZABaHRgBiCs1K9bSDlVG
+      h0JI/WJIGAJ1DlJMrAZ0Yd/CwYMeAhVV/J9A8VFlnHZDWtGRQeA8B9jNWhsULikG
+      PdyJBv0Xfiji4qej8P5OSTZaiu16uKSPwTmBumzmru6PiUIXAGmf20V3TI3g/c1N
+      IQIDAQAB
+      -----END PUBLIC KEY-----
+  private:
+    key: |
+      -----BEGIN PRIVATE KEY-----
+      MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC1cNRmMON7k2at
+      wbVxj+ZJKLbFPMVNTFwU5AlkauLKKzAAhQq6iOUuSp8aJOfoKOdL3LGQmTWylDJr
+      pXk/GYS7k+gr2KU/nnaBsNXCyxqvb//h/L3GXycrnFsMxs3DtCGwQFLhm8oiKSwN
+      W6md+fwZen8ibkqEXpeNt0QRVW9G1jS9hRrtHdNpFRPxMvhC/sFkAFodGAGIKzUr
+      1tIOVUaHQkj9YkgYAnUOUkysBnRh38LBgx4CFVX8n0DxUWWcdkNa0ZFB4DwH2M1a
+      GxQuKQY93IkG/Rd+KOLip6Pw/k5JNlqK7Xq4pI/BOYG6bOau7o+JQhcAaZ/bRXdM
+      jeD9zU0hAgMBAAECggEANAo5kVniVTZQ0/NkRD8esMsRqP6mJGaLXp6NJxUVGSFL
+      8ko2aowLF7zlZ01AirD4riSNdUjMQv0IfSGH5hY+oMJqa/EGbHnZyZbbqLQyYjFA
+      diPUlooCJRsCbmay67fFldTNMNJLJoMilG4+9wWVTgV5Y3m4u8CZvVbcGhCkCu+3
+      ohxKfhv9v3N0jJnqHQ8039NjBNbSDYF784uq71a5Z/W6xzpNO7sa8gaf7XdIKVvO
+      IggMsa1ociT6DIXmne3DW2a2jmphgvZsn4+SmZ5xq7Qe+U2xUz15tIppL4hrbpgm
+      Th3FBduPSl9PPUd+iO+BvX1aETU40Hb+FZ5WULSPNQKBgQDdVvh5pl667NevinuJ
+      GDIGHXkIY5k3jyBu+DwFelykwTISDLS6WU3T0IoN/j7M/S0xZ6mJpD0bglj+QZRT
+      BjhxGehs+Ey2LRezdGxwiCc6f7nGM10eHaShxqlPQl4uduK0+bUQH7iBZPPbIpKi
+      hE1aa2+MtH63iVoSdgqnIsJHdwKBgQDR2mUuOsTDX3kqtaWmxlOac+r1me2cHM/5
+      U9+tsIkKK0r/pZSjTb5Ny3R1zt8m7aqNkSspipUSDGAbamBu1P5aGlAd92KhhicZ
+      18m2RuPUZws7QWLzmngQ3rSdIxMxf8Xb0pBy7/fSMRdPVzE6NH1MT14oGDObQNR+
+      F92JKN1mJwKBgHRQp/MFwvJoVFAjbhf1ZxRfmKMX9ASGanzmZmRakSTjgfSKSM9E
+      7ulIxcPkwAvpYD5+Q1HZxWMXdLzoqZGXy0FkZAgf0/BIchQUMohQhIzxYicOBvk0
+      ireZNpA4SFYSk8CXGNeIU+Vrr9qQqI5PCHdjzhMbJxw8SeE5tw9t7LqxAoGALPkN
+      6AtmMaybTgDhwE0Oi7I972aOmn8+PuOvswx7QfenOgRlR14Y45kvmzO7dR9IBtDO
+      nDd73QNT8WwpwHbbD7pF4zYqKA2VAZ/SNcMZfmKa8JcBus0m4A6qTGbA7UHByGtm
+      04sD5ELrCPDZtuya0ajMt/D/1kzdfSxmKMfeMs8CgYEAk2xLfKhPXDbo+vPpeD2W
+      P50mu3fEekLL5ndqf024YpUChWyXuGR5HhTaFFNviI6A8wHnexFEAI0Cr+77/U+t
+      CZuvBaQ8o5e90xDCC7CiT8r+mh2oMpPAzmwsobVycLvmjJevjkM2D5d+fLjSrAvo
+      0uXQ0ZBDYuWKhj1Q1RbFr/M=
+      -----END PRIVATE KEY-----
