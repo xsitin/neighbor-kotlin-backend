@@ -1,3 +1,3 @@
 package com.example.neighbor.dto
 
-data class UserPublicDto(val name: String, val id: Long, val avatarId: String)
+data class UserPublicDto(val name: String, val id: String, val avatarId: String)
