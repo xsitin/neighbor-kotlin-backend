@@ -1,7 +1,7 @@
 package com.example.neighbor.dto
 
 data class AdvertisementDto(
-    val id: String,
+    val id: Long,
     val price: Int = 0,
     val ownerName: String,
     val title: String,
