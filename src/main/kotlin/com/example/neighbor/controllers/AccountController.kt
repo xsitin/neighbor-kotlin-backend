@@ -19,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException
 import java.io.IOException
 
 @RestController
+@CrossOrigin
 @RequestMapping("accounts")
 class AccountController(
     val userService: UserService,
