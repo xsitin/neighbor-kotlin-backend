@@ -32,15 +32,21 @@ class ImageService(repository: ImageRepository) {
 
     fun createImagesFromMultipartFile(filesList: List<MultipartFile>): List<Image> {
         val imagesContent = ArrayList<ByteArray>()
+
         try {
-            for (image in filesList) imagesContent.add(image.bytes)
+            for (image in filesList) {
+                imagesContent.add(image.bytes)
+            }
         } catch (ignored: IOException) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "incorrect data")
         }
+
         val images = ArrayList<Image>()
         for (imageContent in imagesContent) {
-            images.add(createImage(imageContent))
+            val createdImage = createImage(imageContent)
+            images.add(createdImage)
         }
+
         return images
     }
 }
