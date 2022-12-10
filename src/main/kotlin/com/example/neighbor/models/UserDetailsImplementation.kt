@@ -8,31 +8,18 @@ class UserDetailsImplementation(val user: User) : UserDetails {
     private val locked = false
     private val enabled = true
 
-    override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
-        return arrayListOf(GrantedAuthority { user.role.name })
-    }
+    override fun getAuthorities(): MutableCollection<out GrantedAuthority> =
+        arrayListOf(GrantedAuthority { user.role.name })
 
-    override fun getPassword(): String {
-        return user.password
-    }
+    override fun getPassword(): String = user.password
 
-    override fun getUsername(): String {
-        return user.name
-    }
+    override fun getUsername(): String = user.login
 
-    override fun isAccountNonExpired(): Boolean {
-        return !expired
-    }
+    override fun isAccountNonExpired(): Boolean = !expired
 
-    override fun isAccountNonLocked(): Boolean {
-        return !locked
-    }
+    override fun isAccountNonLocked(): Boolean = !locked
 
-    override fun isCredentialsNonExpired(): Boolean {
-        return false
-    }
+    override fun isCredentialsNonExpired(): Boolean = false
 
-    override fun isEnabled(): Boolean {
-        return enabled
-    }
+    override fun isEnabled(): Boolean = enabled
 }

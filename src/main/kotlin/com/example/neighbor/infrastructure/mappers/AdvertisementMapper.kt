@@ -3,7 +3,6 @@ package com.example.neighbor.infrastructure.mappers
 import com.example.neighbor.dto.AdvertisementDto
 import com.example.neighbor.dto.CreateAdvertisementDto
 import com.example.neighbor.models.Advertisement
-import com.example.neighbor.models.Image
 import org.mapstruct.*
 import org.springframework.stereotype.Component
 
@@ -15,7 +14,7 @@ import org.springframework.stereotype.Component
 )
 @Component
 interface AdvertisementMapper {
-    @Mapping(target = "ownerName", source = "advertisement.owner.name")
+    @Mapping(target = "ownerName", source = "advertisement.owner.login")
     @Mapping(target = "imagesIds", source = "advertisement.images")
     fun advertisementToAdvertisementDto(advertisement: Advertisement): AdvertisementDto
 
