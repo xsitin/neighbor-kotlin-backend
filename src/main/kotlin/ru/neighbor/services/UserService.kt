@@ -1,9 +1,5 @@
 package ru.neighbor.services
 
-import ru.neighbor.dto.SecurityTokenDto
-import ru.neighbor.dto.UserAuthDto
-import ru.neighbor.models.User
-import ru.neighbor.repostories.UserRepository
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -11,13 +7,16 @@ import com.github.fge.jsonpatch.JsonPatch
 import com.github.fge.jsonpatch.JsonPatchException
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.oauth2.jwt.JwtClaimsSet
 import org.springframework.security.oauth2.jwt.JwtEncoder
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
+import ru.neighbor.dto.SecurityTokenDto
+import ru.neighbor.dto.UserAuthDto
+import ru.neighbor.models.User
+import ru.neighbor.repostories.UserRepository
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -40,7 +39,16 @@ class UserService(val repository: UserRepository, val encoder: JwtEncoder, val u
     }
 
     fun getToken(userAuthDto: UserAuthDto): SecurityTokenDto {
-        val details: UserDetails = userDetailsService.loadUserByUsername(userAuthDto.login)
+        val user = repository.findByLogin(userAuthDto.login)
+
+        if (user?.password != userAuthDto.password) {
+            throw ResponseStatusException(
+                HttpStatus.FORBIDDEN,
+                "invalid password"
+            )
+        }
+
+        val details = userDetailsService.loadUserByUsername(userAuthDto.login)
 
         val now = Instant.now()
         val expiry = 5000L

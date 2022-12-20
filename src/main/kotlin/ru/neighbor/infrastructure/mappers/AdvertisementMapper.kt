@@ -20,5 +20,12 @@ interface AdvertisementMapper {
 
     @Mapping(target = "owner", ignore = true)
     @Mapping(target = "images", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "rating", ignore = true)
     fun createAdvertisementDtoToAdvertisement(advertisement: CreateAdvertisementDto): Advertisement
+
+    @Mapping(target = "owner", ignore = true)
+    @Mapping(target = "images", ignore = true)
+    @Mapping(target = "rating", ignore = true)
+    fun advertisementDtoToAdvertisement(advertisementDto: AdvertisementDto): Advertisement
 }

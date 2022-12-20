@@ -1,30 +1,44 @@
 package ru.neighbor.services
 
-import ru.neighbor.models.Advertisement
-import ru.neighbor.repostories.AdvertisementRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Isolation
+import org.springframework.transaction.annotation.Transactional
+import ru.neighbor.models.Advertisement
+import ru.neighbor.repostories.AdvertisementRepository
 import java.util.*
-import javax.transaction.Transactional
 
 @Component
-class AdvertisementService(val repository: AdvertisementRepository) {
-    @Transactional
-    fun getAds(page: Int, pageSize: Int): Page<Advertisement> {
-        val pagination = PageRequest.of(page, pageSize, Sort.unsorted())
+class AdvertisementService(val repository: AdvertisementRepository, val ratingCalculator: RatingCalculator) {
+    fun getAdvertisements(page: Int, pageSize: Int): Page<Advertisement> {
+        val pagination = PageRequest.of(page, pageSize, Sort.by(Sort.Order.desc("rating")))
         return repository.findAll(pagination)
     }
 
-    @Transactional
-    fun getAds(ownerId: Long, page: Int, pageSize: Int): Page<Advertisement> {
-        val pagination = PageRequest.of(page, pageSize, Sort.unsorted())
+    fun getAdvertisements(ownerId: Long, page: Int, pageSize: Int): Page<Advertisement> {
+        val pagination = PageRequest.of(page, pageSize, Sort.by(Sort.Order.desc("rating")))
         return repository.findAllByOwnerId(ownerId, pagination)
+    }
+
+    fun getAdvertisements(category: String, page: Int, pageSize: Int): Page<Advertisement> {
+        val pagination = PageRequest.of(page, pageSize, Sort.by(Sort.Order.desc("rating")))
+        return repository.findAllByCategory(category, pagination)
+    }
+
+    fun findAds(query: String?, page: Int, pageSize: Int): Page<Advertisement> {
+        val pagination = PageRequest.of(page, pageSize, Sort.unsorted())
+        return repository.findByQuery(query, pagination)
     }
 
     @Transactional
     fun create(advertisement: Advertisement): Advertisement {
+        advertisement.rating = ratingCalculator.getRating(advertisement)
+        return repository.save(advertisement)
+    }
+
+    fun update(advertisement: Advertisement): Advertisement {
         return repository.save(advertisement)
     }
 
@@ -33,8 +47,15 @@ class AdvertisementService(val repository: AdvertisementRepository) {
         repository.delete(ad)
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     fun getById(id: Long): Optional<Advertisement> {
-        return repository.findById(id)
+        val advertisement = repository.findById(id)
+
+        advertisement.ifPresent { ad ->
+            ad.rating = ad.rating + 1
+            repository.save(ad)
+        }
+
+        return advertisement
     }
 }

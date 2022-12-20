@@ -6,6 +6,6 @@ data class AdvertisementDto(
     val ownerName: String,
     val title: String,
     val description: String,
-    val imagesIds: Array<String>,
+    val imagesIds: Array<String>?,
     val category: String
 )

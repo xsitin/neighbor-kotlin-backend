@@ -1,6 +1,7 @@
 package ru.neighbor.models
 
 import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 class UserDetailsImplementation(val user: User) : UserDetails {
@@ -9,7 +10,7 @@ class UserDetailsImplementation(val user: User) : UserDetails {
     private val enabled = true
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> =
-        arrayListOf(GrantedAuthority { user.role.name })
+        arrayListOf(SimpleGrantedAuthority(user.role.name))
 
     override fun getPassword(): String = user.password
 

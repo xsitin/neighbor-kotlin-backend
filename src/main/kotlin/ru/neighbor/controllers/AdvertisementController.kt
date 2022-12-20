@@ -1,5 +1,11 @@
 package ru.neighbor.controllers
 
+import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
+import org.springframework.security.core.Authentication
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
+import org.springframework.web.server.ResponseStatusException
 import ru.neighbor.dto.AdvertisementDto
 import ru.neighbor.dto.CreateAdvertisementDto
 import ru.neighbor.dto.PaginationInfo
@@ -7,12 +13,7 @@ import ru.neighbor.infrastructure.mappers.AdvertisementMapper
 import ru.neighbor.services.AdvertisementService
 import ru.neighbor.services.ImageService
 import ru.neighbor.services.UserService
-import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
-import org.springframework.security.core.Authentication
-import org.springframework.web.bind.annotation.*
-import org.springframework.web.multipart.MultipartFile
-import org.springframework.web.server.ResponseStatusException
+
 
 @RestController
 @CrossOrigin
@@ -35,7 +36,7 @@ class AdvertisementController(
     @GetMapping("get")
     @ResponseBody
     fun getPopular(@RequestParam page: Int, @RequestParam pageSize: Int): PaginationInfo<AdvertisementDto> {
-        val advertisements = advertisementService.getAds(page - 1, pageSize)
+        val advertisements = advertisementService.getAdvertisements(page - 1, pageSize)
         val advertisementDtos = ArrayList<AdvertisementDto>()
         for (ad in advertisements) {
             advertisementDtos.add(advertisementMapper.advertisementToAdvertisementDto(ad))
@@ -51,7 +52,7 @@ class AdvertisementController(
         @RequestParam pageSize: Int
     ): PaginationInfo<AdvertisementDto> {
         val user = userService.getUser(login) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "user not found")
-        val advertisements = advertisementService.getAds(user.id, page - 1, pageSize)
+        val advertisements = advertisementService.getAdvertisements(user.id, page - 1, pageSize)
         val advertisementDtos = ArrayList<AdvertisementDto>()
 
         for (advertisement in advertisements) {
@@ -59,6 +60,45 @@ class AdvertisementController(
         }
 
         return PaginationInfo(page, pageSize, advertisementDtos.size, advertisements.totalPages, advertisementDtos)
+    }
+
+
+    @GetMapping("categories")
+    @ResponseBody
+    fun getWithCategory(
+        @RequestParam category: String,
+        @RequestParam page: Int,
+        @RequestParam pageSize: Int
+    ): PaginationInfo<AdvertisementDto> {
+        val advertisements = advertisementService.getAdvertisements(category, page - 1, pageSize)
+        val advertisementDtos = advertisements.map(advertisementMapper::advertisementToAdvertisementDto).toList()
+
+        return PaginationInfo(
+            page,
+            pageSize,
+            advertisementDtos.size,
+            advertisements.totalPages,
+            advertisementDtos
+        )
+    }
+
+    @GetMapping("search")
+    @ResponseBody
+    fun searchAdvertisement(
+        @RequestParam query: String,
+        @RequestParam page: Int,
+        @RequestParam pageSize: Int
+    ): PaginationInfo<AdvertisementDto> {
+        val advertisements = advertisementService.findAds(query, page - 1, pageSize)
+        val advertisementDtos = advertisements.map(advertisementMapper::advertisementToAdvertisementDto).toList()
+
+        return PaginationInfo(
+            page,
+            pageSize,
+            advertisementDtos.size,
+            advertisements.totalPages,
+            advertisementDtos
+        )
     }
 
     @DeleteMapping("{id}/delete")
@@ -95,5 +135,36 @@ class AdvertisementController(
 
         val created = advertisementService.create(advertisement)
         return advertisementMapper.advertisementToAdvertisementDto(created)
+    }
+
+    @PatchMapping("update")
+    @ResponseBody
+    fun update(
+        auth: Authentication,
+        @RequestPart("Ad") advertisementDto: AdvertisementDto,
+        @RequestPart("images") filesList: List<MultipartFile>
+    ): AdvertisementDto {
+        val user =
+            userService.getUser(auth.name) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "user not found")
+        var advertisement = advertisementService.getById(advertisementDto.id.toLong())
+            .orElseThrow { throw ResponseStatusException(HttpStatus.NOT_FOUND, "advertisement not found") }
+
+        if (advertisement.owner.id != user.id) {
+            throw ResponseStatusException(
+                HttpStatus.FORBIDDEN,
+                "not your business"
+            )
+        }
+
+        val rating = advertisement.rating
+        advertisement = advertisementMapper.advertisementDtoToAdvertisement(advertisementDto)
+        advertisement.rating = rating
+
+        val images = imageService.createImagesFromMultipartFile(filesList)
+        advertisement.images = images
+        advertisement.owner = user
+
+        val updated = advertisementService.update(advertisement)
+        return advertisementMapper.advertisementToAdvertisementDto(updated)
     }
 }

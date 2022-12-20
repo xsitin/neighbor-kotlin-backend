@@ -1,14 +1,5 @@
 package ru.neighbor.controllers
 
-import ru.neighbor.dto.SecurityTokenDto
-import ru.neighbor.dto.UserAuthDto
-import ru.neighbor.dto.UserPublicDto
-import ru.neighbor.dto.UserRegistrationDto
-import ru.neighbor.infrastructure.mappers.UserMapper
-import ru.neighbor.models.Image
-import ru.neighbor.models.User
-import ru.neighbor.services.ImageService
-import ru.neighbor.services.UserService
 import com.github.fge.jsonpatch.JsonPatch
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus
@@ -16,7 +7,15 @@ import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.server.ResponseStatusException
+import ru.neighbor.dto.*
+import ru.neighbor.infrastructure.mappers.UserMapper
+import ru.neighbor.models.Image
+import ru.neighbor.models.Role
+import ru.neighbor.models.User
+import ru.neighbor.services.ImageService
+import ru.neighbor.services.UserService
 import java.io.IOException
+
 
 @RestController
 @CrossOrigin
@@ -40,6 +39,17 @@ class AccountController(
     @PostMapping("login", consumes = ["application/json"])
     fun login(@RequestBody userAuthDto: UserAuthDto): SecurityTokenDto? {
         return userService.getToken(userAuthDto)
+    }
+
+    @GetMapping("{login}/full")
+    fun getFullUserInfo(@PathVariable login: String, auth: Authentication): UserFullDto {
+        val role = if (auth.authorities.isEmpty()) "" else auth.authorities.stream().findFirst().get().authority
+        if (!(auth.name == login || role == Role.Administrator.name)) {
+            throw ResponseStatusException(HttpStatus.FORBIDDEN)
+        }
+        val user = userService.getUser(login) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "user not found")
+
+        return mapper.userToUserFullDto(user)
     }
 
     @GetMapping("{login}")
